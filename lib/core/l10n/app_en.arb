@@ -1,0 +1,143 @@
+{
+  "@@locale": "en",
+  "appTitle": "Movies App",
+  "@appTitle": {
+    "description": "Title of the application"
+  },
+  "popularMovies": "Popular Movies",
+  "@popularMovies": {
+    "description": "Header for popular movies section"
+  },
+  "topRatedMovies": "Top Rated Movies",
+  "@topRatedMovies": {
+    "description": "Header for top rated movies section"
+  },
+  "nowPlaying": "Now Playing",
+  "@nowPlaying": {
+    "description": "Header for now playing movies section"
+  },
+  "upcomingMovies": "Upcoming Movies",
+  "@upcomingMovies": {
+    "description": "Header for upcoming movies section"
+  },
+  "searchHint": "Search movies, actors, directors...",
+  "@searchHint": {
+    "description": "Placeholder in the search bar"
+  },
+  "seeAll": "See All",
+  "@seeAll": {
+    "description": "Button to view full list"
+  },
+  "watchlist": "Watchlist",
+  "@watchlist": {
+    "description": "Watchlist tab or button title"
+  },
+  "favorites": "Favorites",
+  "@favorites": {
+    "description": "Favorites tab or button title"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings screen title"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language selection label"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language name"
+  },
+  "arabic": "Arabic",
+  "@arabic": {
+    "description": "Arabic language name"
+  },
+  "theme": "Theme",
+  "@theme": {
+    "description": "Theme mode selection label"
+  },
+  "darkMode": "Dark Mode",
+  "@darkMode": {
+    "description": "Dark theme option"
+  },
+  "lightMode": "Light Mode",
+  "@lightMode": {
+    "description": "Light theme option"
+  },
+  "rating": "Rating",
+  "@rating": {
+    "description": "Movie rating label"
+  },
+  "releaseDate": "Release Date",
+  "@releaseDate": {
+    "description": "Movie release date label"
+  },
+  "overview": "Overview",
+  "@overview": {
+    "description": "Movie overview/synopsis header"
+  },
+  "cast": "Cast",
+  "@cast": {
+    "description": "Movie cast/actors header"
+  },
+  "noMoviesFound": "No movies found",
+  "@noMoviesFound": {
+    "description": "Empty state text when search yields no results"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry action button text"
+  },
+  "errorLoadingMovies": "Failed to load movies. Please try again.",
+  "@errorLoadingMovies": {
+    "description": "Error message displayed when movie fetching fails"
+  },
+  "invalidName": "Invalid Name",
+  "@invalidName": {
+    "description": "Validation error for invalid name"
+  },
+  "nameCantBeEmpty": "Name Can''t Be Empty",
+  "@nameCantBeEmpty": {
+    "description": "Validation error when name is empty"
+  },
+  "nameisinInvalidFormat": "Name is in Invalid Format",
+  "@nameisinInvalidFormat": {
+    "description": "Validation error when name format is invalid"
+  },
+  "invalidEmail": "Invalid email",
+  "@invalidEmail": {
+    "description": "Validation error for invalid email"
+  },
+  "emailCantBeEmpty": "Email can''t be empty",
+  "@emailCantBeEmpty": {
+    "description": "Validation error when email is empty"
+  },
+  "emailIsInInvalidFormat": "Please enter a valid email address",
+  "@emailIsInInvalidFormat": {
+    "description": "Validation error when email format is invalid"
+  },
+  "invalidPassword": "Invalid password",
+  "@invalidPassword": {
+    "description": "Validation error for invalid password"
+  },
+  "passwordCantBeEmpty": "Password can''t be empty",
+  "@passwordCantBeEmpty": {
+    "description": "Validation error when password is empty"
+  },
+  "passwordIsInInvalidFormat": "Password must be at least 8 characters and include uppercase, lowercase, number, and special character",
+  "@passwordIsInInvalidFormat": {
+    "description": "Validation error when password requirements are not met"
+  },
+  "invalidPasswordConfirmation": "Invalid password confirmation",
+  "@invalidPasswordConfirmation": {
+    "description": "Validation error for invalid password confirmation"
+  },
+  "passwordConfirmationCantBeEmpty": "Password confirmation can''t be empty",
+  "@passwordConfirmationCantBeEmpty": {
+    "description": "Validation error when password confirmation is empty"
+  },
+  "passwordsDoNotMatch": "Passwords do not match",
+  "@passwordsDoNotMatch": {
+    "description": "Validation error when passwords do not match"
+  }
+}

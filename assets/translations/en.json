@@ -1,0 +1,14 @@
+{
+  "invalidName": "Invalid Name",
+  "nameCantBeEmpty": "Name Can't Be Empty",
+  "nameisinInvalidFormat": "Name is in Invalid Format",
+  "invalidEmail": "Invalid email",
+  "emailCantBeEmpty": "Email can't be empty",
+  "emailIsInInvalidFormat": "Please enter a valid email address",
+  "invalidPassword": "Invalid password",
+  "passwordCantBeEmpty": "Password can't be empty",
+  "passwordIsInInvalidFormat": "Password must be at least 8 characters and include uppercase, lowercase, number, and special character",
+  "invalidPasswordConfirmation": "Invalid password confirmation",
+  "passwordConfirmationCantBeEmpty": "Password confirmation can't be empty",
+  "passwordsDoNotMatch": "Passwords do not match"
+}
