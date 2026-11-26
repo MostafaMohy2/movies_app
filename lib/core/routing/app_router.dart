@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import 'routes.dart';
 
 class AppRouter {
@@ -8,10 +10,9 @@ class AppRouter {
     switch (settings.name) {
       case Routes.initial:
       case Routes.splash:
+      case Routes.onboarding:
         return MaterialPageRoute(
-          builder: (_) => const Scaffold(
-            body: Center(child: Text('Movies App Foundation Ready')),
-          ),
+          builder: (_) => const OnboardingPage(),
           settings: settings,
         );
       default:
