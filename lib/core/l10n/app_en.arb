@@ -139,5 +139,17 @@
   "passwordsDoNotMatch": "Passwords do not match",
   "@passwordsDoNotMatch": {
     "description": "Validation error when passwords do not match"
+  },
+  "login": "Login",
+  "@login": {
+    "description": "Login screen title and action label"
+  },
+  "register": "Register",
+  "@register": {
+    "description": "Register screen title and action label"
+  },
+  "forgotPassword": "Forgot Password",
+  "@forgotPassword": {
+    "description": "Forgot password screen title"
   }
 }

@@ -1,0 +1,25 @@
+# Walkthrough: Adopt Development Rules (`CLAUDE.md`) & Docs Scaffold
+
+- **Date**: 2026-11-26
+- **Summary**: Adopted the comprehensive Flutter development ruleset into `movies_app` as `CLAUDE.md`, tailored to the project's existing Clean Architecture foundation (`BaseCubit`, `ApiResult`, `Resources`, `Errors`, `safeCall`, `sl`, `AppRouter`, `AppLocalizations` via ARB/`gen-l10n`, `AppColors`, `AppTypography`). Updated `AGENTS.md` and `.agents/agents/flutter_developer.md` to enforce `CLAUDE.md` consistently, and initialized the `docs/` index, project overview, network reference, and walkthrough log.
+- **Files changed**:
+  - Created `CLAUDE.md`
+  - Modified `AGENTS.md`
+  - Modified `.agents/agents/flutter_developer.md`
+  - Created `docs/README.md`
+  - Created `docs/01-project-overview.md`
+  - Created `docs/09-network-layer.md`
+  - Created `docs/walkthroughs/README.md`
+  - Created `docs/walkthroughs/2026-11-26_adopt-development-rules.md`
+- **API changes**: None (`docs/09-network-layer.md` created to document existing `lib/core/network/` foundation).
+- **Widgets**: None (`docs/04-theme-and-ui-components.md` left intact with `MovieCard`).
+- **DI**: None (no changes to `lib/core/di/`).
+- **Routing**: None (no changes to `lib/core/routing/`).
+- **Localization**: None (no new ARB keys).
+- **Platform impact**: None (documentation and agent configuration only).
+- **Code generation**: None required.
+- **Testing**: Ran `dart format --output=none --set-exit-if-changed .`, `flutter analyze --no-fatal-infos`, and `flutter test`.
+- **Known limitations / follow-ups**:
+  - `assets/translations/{en,ar}.json` exist alongside `lib/core/l10n/app_{en,ar}.arb`; keep ARB as the active `AppLocalizations` source unless unified later.
+  - `MovieCard` currently uses a `CircularProgressIndicator` placeholder; replace with a shared shimmer widget when `lib/core/common_ui/shimmer/` is introduced (§12).
+  - Add `docs/13-feature-<name>.md` as each feature is implemented.

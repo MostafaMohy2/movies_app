@@ -114,4 +114,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String get register => 'Register';
+
+  @override
+  String get forgotPassword => 'Forgot Password';
 }

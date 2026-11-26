@@ -34,5 +34,8 @@
   "passwordIsInInvalidFormat": "يجب ألا تقل كلمة المرور عن 8 أحرف وتحتوي على حرف كبير وصغير ورقم ورمز خاص",
   "invalidPasswordConfirmation": "تأكيد كلمة المرور غير صالح",
   "passwordConfirmationCantBeEmpty": "لا يمكن أن يكون تأكيد كلمة المرور فارغاً",
-  "passwordsDoNotMatch": "كلمتا المرور غير متطابقتين"
+  "passwordsDoNotMatch": "كلمتا المرور غير متطابقتين",
+  "login": "تسجيل الدخول",
+  "register": "إنشاء حساب",
+  "forgotPassword": "نسيت كلمة المرور"
 }

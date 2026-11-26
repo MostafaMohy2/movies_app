@@ -115,4 +115,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get passwordsDoNotMatch => 'كلمتا المرور غير متطابقتين';
+
+  @override
+  String get login => 'تسجيل الدخول';
+
+  @override
+  String get register => 'إنشاء حساب';
+
+  @override
+  String get forgotPassword => 'نسيت كلمة المرور';
 }

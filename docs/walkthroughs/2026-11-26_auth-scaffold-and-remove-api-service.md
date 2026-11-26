@@ -1,0 +1,23 @@
+# Walkthrough: Remove `ApiService` & Scaffold `auth` Feature
+
+- **Date**: 2026-11-26
+- **Summary**: Created branch `feat/auth-profile` from `development`, removed the shared `ApiService` (`api_service.dart` / `api_service.g.dart`) in favour of per-feature Retrofit data sources, and scaffolded the `auth` feature (`data/`, `domain/`, `presentation/` for `login`, `register`, `forgot_password`) in compliance with `CLAUDE.md`. Left `profile` at `.gitkeep` as requested.
+- **Files changed**:
+  - Deleted `lib/core/network/api_service.dart`, `lib/core/network/api_service.g.dart`, `lib/features/auth/.gitkeep`
+  - Modified `lib/core/di/di_module.dart`, `lib/core/di/service_locator.config.dart`
+  - Modified `lib/core/l10n/app_en.arb`, `lib/core/l10n/app_ar.arb`, `lib/core/l10n/app_localizations*.dart`
+  - Created `lib/features/auth/` Clean Architecture scaffold (`AuthRemoteDataSource` + `.g.dart`, `AuthDiModule`, `AuthRepository`, `AuthRepositoryImpl`, `LoginCubit`/`States`/`Page`, `RegisterCubit`/`States`/`Page`, `ForgotPasswordCubit`/`States`/`Page`)
+  - Created Cubit tests under `test/features/auth/presentation/`
+  - Updated `CLAUDE.md`, `.agents/agents/flutter_developer.md`, `docs/01-project-overview.md`, `docs/09-network-layer.md`, `docs/README.md`, `docs/walkthroughs/README.md`
+  - Created `docs/13-feature-auth.md`, `docs/walkthroughs/2026-11-26_auth-scaffold-and-remove-api-service.md`
+- **API changes**: Removed `ApiService`; added `AuthRemoteDataSource` (`@RestApi()`). Updated `docs/09-network-layer.md`.
+- **Widgets**: No shared `lib/core/common_ui/` widgets added (`docs/04-theme-and-ui-components.md` unchanged).
+- **DI**: Removed `apiService` from `DiModule`; added `AuthDiModule`, `AuthRepositoryImpl`, `LoginCubit`, `RegisterCubit`, and `ForgotPasswordCubit` and regenerated `service_locator.config.dart`.
+- **Routing**: `Routes.login`, `Routes.register`, `Routes.forgotPassword` remain defined in `lib/core/routing/routes.dart`.
+- **Localization**: Added `login`, `register`, `forgotPassword` to `app_en.arb` and `app_ar.arb` and regenerated `app_localizations*.dart`.
+- **Platform impact**: None.
+- **Code generation**: Re-ran `flutter gen-l10n` and `dart run build_runner build --delete-conflicting-outputs`.
+- **Testing**: Added unit tests for `LoginCubit`, `RegisterCubit`, and `ForgotPasswordCubit`; verified with `dart format`, `flutter analyze`, and `flutter test`.
+- **Known limitations / follow-ups**:
+  - `auth` API endpoints, DTOs, mappers, and use cases await API contract confirmation.
+  - `profile` feature files intentionally deferred until requested.

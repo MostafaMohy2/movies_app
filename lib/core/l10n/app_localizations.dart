@@ -307,6 +307,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Passwords do not match'**
   String get passwordsDoNotMatch;
+
+  /// Login screen title and action label
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get login;
+
+  /// Register screen title and action label
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get register;
+
+  /// Forgot password screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password'**
+  String get forgotPassword;
 }
 
 class _AppLocalizationsDelegate
