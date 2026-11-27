@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../theme/app_colors.dart';
-import '../../theme/app_typography.dart';
 
 class LanguageToggleSwitch extends StatelessWidget {
   final Locale currentLocale;
@@ -18,7 +17,7 @@ class LanguageToggleSwitch extends StatelessWidget {
     final bool isEnglish = currentLocale.languageCode == 'en';
 
     return Container(
-      padding: EdgeInsets.all(4.r),
+      padding: EdgeInsets.all(3.r),
       decoration: BoxDecoration(
         color: AppColors.background,
         borderRadius: BorderRadius.circular(24.r),
@@ -27,18 +26,18 @@ class LanguageToggleSwitch extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _LanguagePillOption(
-            label: 'EN',
+          _FlagOption(
             semanticLabel: 'English',
             isSelected: isEnglish,
             onTap: () => onLocaleSelected(const Locale('en')),
+            flag: const _UsFlagIcon(),
           ),
-          SizedBox(width: 6.w),
-          _LanguagePillOption(
-            label: 'AR',
+          SizedBox(width: 8.w),
+          _FlagOption(
             semanticLabel: 'العربية',
             isSelected: !isEnglish,
             onTap: () => onLocaleSelected(const Locale('ar')),
+            flag: const _EgyptFlagIcon(),
           ),
         ],
       ),
@@ -46,17 +45,17 @@ class LanguageToggleSwitch extends StatelessWidget {
   }
 }
 
-class _LanguagePillOption extends StatelessWidget {
-  final String label;
+class _FlagOption extends StatelessWidget {
   final String semanticLabel;
   final bool isSelected;
   final VoidCallback onTap;
+  final Widget flag;
 
-  const _LanguagePillOption({
-    required this.label,
+  const _FlagOption({
     required this.semanticLabel,
     required this.isSelected,
     required this.onTap,
+    required this.flag,
   });
 
   @override
@@ -68,27 +67,79 @@ class _LanguagePillOption extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(20.r),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minWidth: 48.w, minHeight: 40.h),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-            decoration: BoxDecoration(
-              color: isSelected ? AppColors.primary : Colors.transparent,
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(20.r),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          width: 34.r,
+          height: 34.r,
+          padding: EdgeInsets.all(2.r),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isSelected ? AppColors.primary : AppColors.transparent,
+              width: 2.5,
             ),
-            alignment: Alignment.center,
-            child: Text(
-              label,
-              style: AppTypography.labelSmall.copyWith(
-                color: isSelected ? Colors.black : AppColors.textPrimary,
-                fontWeight: FontWeight.bold,
+          ),
+          child: ClipOval(child: flag),
+        ),
+      ),
+    );
+  }
+}
+
+class _UsFlagIcon extends StatelessWidget {
+  const _UsFlagIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Column(
+          children: List.generate(
+            7,
+            (index) => Expanded(
+              child: Container(
+                color: index.isEven ? AppColors.actionRed : AppColors.white,
               ),
             ),
           ),
         ),
-      ),
+        FractionallySizedBox(
+          alignment: Alignment.topLeft,
+          widthFactor: 0.5,
+          heightFactor: 0.55,
+          child: Container(
+            color: const Color(0xFF0A3161),
+            alignment: Alignment.center,
+            child: Icon(Icons.star, size: 8.r, color: AppColors.white),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _EgyptFlagIcon extends StatelessWidget {
+  const _EgyptFlagIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(child: Container(color: AppColors.actionRed)),
+        Expanded(
+          child: Container(
+            color: AppColors.white,
+            alignment: Alignment.center,
+            child: Icon(
+              Icons.shield_outlined,
+              size: 7.r,
+              color: AppColors.primaryDark,
+            ),
+          ),
+        ),
+        Expanded(child: Container(color: AppColors.background)),
+      ],
     );
   }
 }

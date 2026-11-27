@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,6 +15,19 @@ import 'package:movies_app/core/utils/validator.dart';
 import 'register_cubit.dart';
 import 'register_states.dart';
 
+/// Available avatar asset paths for the register avatar carousel.
+const List<String> _kAvatarAssets = [
+  'assets/images/Component 11 \u2013 1.png',
+  'assets/images/Component 11 \u2013 2.png',
+  'assets/images/Component 11 \u2013 4.png',
+  'assets/images/Component 11 \u2013 5.png',
+  'assets/images/Component 11 \u2013 6.png',
+  'assets/images/Component 11 \u2013 7.png',
+  'assets/images/Component 11 \u2013 8.png',
+  'assets/images/Component 11 \u2013 9.png',
+  'assets/images/Component 11 \u2013 10.png',
+];
+
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
@@ -25,85 +36,98 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  static const List<String> _avatarAssets = [
-    'assets/images/Component 11 – 1.png',
-    'assets/images/Component 11 – 2.png',
-    'assets/images/Component 11 – 4.png',
-    'assets/images/Component 11 – 5.png',
-    'assets/images/Component 11 – 6.png',
-    'assets/images/Component 11 – 7.png',
-    'assets/images/Component 11 – 8.png',
-    'assets/images/Component 11 – 9.png',
-    'assets/images/Component 11 – 10.png',
-  ];
-
   final RegisterCubit _cubit = sl<RegisterCubit>();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final PageController _avatarController = PageController(
-    viewportFraction: 0.36,
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final PageController _avatarPageController = PageController(
+    viewportFraction: 0.4,
     initialPage: 0,
   );
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  StreamSubscription<RegisterNavigationAction>? _navSub;
-
-  @override
-  void initState() {
-    super.initState();
-    _navSub = _cubit.navigation.listen(_handleNavigation);
-  }
-
-  void _handleNavigation(RegisterNavigationAction effect) {
-    switch (effect) {
-      case NavigateToLoginScreen():
-        context.pushReplacementNamed(Routes.login);
-      case NavigateToHomeScreen():
-        Navigator.pushNamedAndRemoveUntil(context, Routes.home, (_) => false);
-      case ShowRegisterErrorToast(:final errorMessage):
-        context.showErrorSnackBar(errorMessage);
-    }
-  }
-
-  void _onRegisterPressed() {
-    if (_formKey.currentState?.validate() ?? false) {
-      _cubit.doAction(
-        SubmitRegisterAction(
-          name: _nameController.text.trim(),
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-          phone: _phoneController.text.trim(),
-        ),
-      );
-    }
-  }
 
   @override
   void dispose() {
-    _navSub?.cancel();
-    _avatarController.dispose();
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _phoneController.dispose();
+    _avatarPageController.dispose();
     _cubit.close();
     super.dispose();
+  }
+
+  void _onRegisterPressed() {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    _cubit.register(
+      name: _nameController.text.trim(),
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+      phone: _phoneController.text.trim(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _cubit,
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: _buildAppBar(context),
-        body: SafeArea(
-          child: BlocBuilder<RegisterCubit, RegisterStates>(
-            builder: (context, state) => _buildBody(context, state),
+      child: BlocConsumer<RegisterCubit, RegisterState>(
+        listener: _handleStateChange,
+        builder: (ctx, state) => _buildScaffold(ctx, state),
+      ),
+    );
+  }
+
+  void _handleStateChange(BuildContext context, RegisterState state) {
+    if (state.registerResource.isSuccess) {
+      Navigator.pushNamedAndRemoveUntil(context, Routes.login, (_) => false);
+    } else if (state.registerResource.isError) {
+      context.showErrorSnackBar(
+        state.registerResource.message ?? context.locale.register,
+      );
+    }
+  }
+
+  Widget _buildScaffold(BuildContext context, RegisterState state) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: _buildAppBar(context),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsetsDirectional.symmetric(
+            horizontal: 24.w,
+            vertical: 16.h,
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildAvatarCarousel(context, state),
+                SizedBox(height: 8.h),
+                Text(context.locale.avatar, style: AppTypography.bodyMedium),
+                SizedBox(height: 24.h),
+                _buildNameField(context),
+                SizedBox(height: 16.h),
+                _buildEmailField(context),
+                SizedBox(height: 16.h),
+                _buildPasswordField(context),
+                SizedBox(height: 16.h),
+                _buildConfirmPasswordField(context),
+                SizedBox(height: 16.h),
+                _buildPhoneField(context),
+                SizedBox(height: 28.h),
+                _buildRegisterButton(context, state),
+                SizedBox(height: 16.h),
+                _buildLoginRow(context),
+                SizedBox(height: 24.h),
+                _buildLanguageToggle(context),
+                SizedBox(height: 16.h),
+              ],
+            ),
           ),
         ),
       ),
@@ -114,100 +138,42 @@ class _RegisterPageState extends State<RegisterPage> {
     return AppBar(
       backgroundColor: AppColors.background,
       elevation: 0,
-      centerTitle: true,
       leading: IconButton(
         tooltip: context.locale.back,
-        icon: const Icon(Icons.arrow_back, color: AppColors.primary),
-        onPressed: () => _cubit.doAction(NavigateToLoginAction()),
+        icon: const Icon(
+          Icons.arrow_back_ios_new_rounded,
+          color: AppColors.primary,
+        ),
+        onPressed: () => Navigator.pop(context),
       ),
       title: Text(
         context.locale.register,
-        style: AppTypography.titleLarge.copyWith(color: AppColors.primary),
+        style: AppTypography.titleMedium.copyWith(color: AppColors.primary),
       ),
     );
   }
 
-  Widget _buildBody(BuildContext context, RegisterStates state) {
-    return SingleChildScrollView(
-      padding: EdgeInsetsDirectional.symmetric(
-        horizontal: 20.w,
-        vertical: 16.h,
-      ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildAvatarCarousel(state),
-            SizedBox(height: 8.h),
-            Center(
-              child: Text(
-                context.locale.avatar,
-                style: AppTypography.bodyLarge,
-              ),
-            ),
-            SizedBox(height: 20.h),
-            _buildNameField(context),
-            SizedBox(height: 16.h),
-            _buildEmailField(context),
-            SizedBox(height: 16.h),
-            _buildPasswordField(context),
-            SizedBox(height: 16.h),
-            _buildConfirmPasswordField(context),
-            SizedBox(height: 16.h),
-            _buildPhoneField(context),
-            SizedBox(height: 24.h),
-            _buildCreateAccountButton(context, state),
-            SizedBox(height: 18.h),
-            _buildLoginPrompt(context),
-            SizedBox(height: 20.h),
-            _buildLanguageToggle(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAvatarCarousel(RegisterStates state) {
+  Widget _buildAvatarCarousel(BuildContext context, RegisterState state) {
     return SizedBox(
-      height: 140.h,
+      height: 110.h,
       child: PageView.builder(
-        controller: _avatarController,
-        itemCount: _avatarAssets.length,
-        onPageChanged: (index) {
-          _cubit.doAction(
-            SelectAvatarAction(avatarAsset: _avatarAssets[index]),
-          );
-        },
-        itemBuilder: (context, index) {
-          final asset = _avatarAssets[index];
-          final isSelected = asset == state.selectedAvatarAsset;
-          return GestureDetector(
+        controller: _avatarPageController,
+        itemCount: _kAvatarAssets.length,
+        onPageChanged: (index) => _cubit.selectAvatar(_kAvatarAssets[index]),
+        itemBuilder: (_, index) {
+          final asset = _kAvatarAssets[index];
+          final isSelected = state.selectedAvatarAsset == asset;
+          return _AvatarItem(
+            assetPath: asset,
+            isSelected: isSelected,
             onTap: () {
-              _avatarController.animateToPage(
+              _avatarPageController.animateToPage(
                 index,
-                duration: const Duration(milliseconds: 250),
-                curve: Curves.easeOut,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
               );
-              _cubit.doAction(SelectAvatarAction(avatarAsset: asset));
+              _cubit.selectAvatar(asset);
             },
-            child: Center(
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 220),
-                width: isSelected ? 124.r : 84.r,
-                height: isSelected ? 124.r : 84.r,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: isSelected
-                        ? AppColors.primary
-                        : AppColors.transparent,
-                    width: 2.5,
-                  ),
-                ),
-                child: ClipOval(child: Image.asset(asset, fit: BoxFit.cover)),
-              ),
-            ),
           );
         },
       ),
@@ -218,8 +184,9 @@ class _RegisterPageState extends State<RegisterPage> {
     return AppTextField(
       controller: _nameController,
       hintText: context.locale.name,
-      prefixIcon: Icons.badge_outlined,
-      validator: (val) => Validator.nameValidator(val, context.locale),
+      prefixIcon: Icons.person_outline_rounded,
+      textInputAction: TextInputAction.next,
+      validator: (v) => Validator.nameValidator(v, context.locale),
     );
   }
 
@@ -227,9 +194,10 @@ class _RegisterPageState extends State<RegisterPage> {
     return AppTextField(
       controller: _emailController,
       hintText: context.locale.email,
-      prefixIcon: Icons.email_rounded,
+      prefixIcon: Icons.email_outlined,
       keyboardType: TextInputType.emailAddress,
-      validator: (val) => Validator.emailValidator(val, context.locale),
+      textInputAction: TextInputAction.next,
+      validator: (v) => Validator.emailValidator(v, context.locale),
     );
   }
 
@@ -237,10 +205,11 @@ class _RegisterPageState extends State<RegisterPage> {
     return AppTextField(
       controller: _passwordController,
       hintText: context.locale.password,
-      prefixIcon: Icons.lock_rounded,
+      prefixIcon: Icons.lock_outline_rounded,
       isPassword: true,
       obscureTooltip: context.locale.togglePasswordVisibility,
-      validator: (val) => Validator.passwordValidator(val, context.locale),
+      textInputAction: TextInputAction.next,
+      validator: (v) => Validator.passwordValidator(v, context.locale),
     );
   }
 
@@ -248,11 +217,12 @@ class _RegisterPageState extends State<RegisterPage> {
     return AppTextField(
       controller: _confirmPasswordController,
       hintText: context.locale.confirmPassword,
-      prefixIcon: Icons.lock_rounded,
+      prefixIcon: Icons.lock_outline_rounded,
       isPassword: true,
       obscureTooltip: context.locale.togglePasswordVisibility,
-      validator: (val) => Validator.passwordConfirmationValidator(
-        val,
+      textInputAction: TextInputAction.next,
+      validator: (v) => Validator.passwordConfirmationValidator(
+        v,
         _passwordController.text,
         context.locale,
       ),
@@ -263,59 +233,88 @@ class _RegisterPageState extends State<RegisterPage> {
     return AppTextField(
       controller: _phoneController,
       hintText: context.locale.phoneNumber,
-      prefixIcon: Icons.phone_rounded,
+      prefixIcon: Icons.phone_outlined,
       keyboardType: TextInputType.phone,
       textInputAction: TextInputAction.done,
-      validator: (val) => Validator.phoneValidator(val, context.locale),
+      validator: (v) => Validator.phoneValidator(v, context.locale),
       onFieldSubmitted: (_) => _onRegisterPressed(),
     );
   }
 
-  Widget _buildCreateAccountButton(BuildContext context, RegisterStates state) {
+  Widget _buildRegisterButton(BuildContext context, RegisterState state) {
     return AppButton(
       label: context.locale.createAccount,
       isLoading: state.registerResource.isLoading,
+      isEnabled: !state.registerResource.isLoading,
       onPressed: _onRegisterPressed,
     );
   }
 
-  Widget _buildLoginPrompt(BuildContext context) {
-    return Center(
-      child: RichText(
-        text: TextSpan(
-          style: AppTypography.bodyMedium.copyWith(
-            color: AppColors.textPrimary,
-          ),
-          children: [
-            TextSpan(text: '${context.locale.alreadyHaveAccount} '),
-            TextSpan(
-              text: context.locale.login,
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-              ),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () => _cubit.doAction(NavigateToLoginAction()),
-            ),
-          ],
+  Widget _buildLoginRow(BuildContext context) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        Text(
+          context.locale.alreadyHaveAccount,
+          style: AppTypography.bodyMedium,
         ),
-      ),
+        GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Text(
+            context.locale.login,
+            style: AppTypography.bodyMedium.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildLanguageToggle() {
-    return Center(
-      child: BlocBuilder<AppConfigCubit, AppConfigStates>(
-        builder: (context, configState) {
-          return LanguageToggleSwitch(
-            currentLocale: configState.locale,
-            onLocaleSelected: (locale) {
-              context.read<AppConfigCubit>().doAction(
-                ChangeLocaleAction(locale),
-              );
-            },
-          );
-        },
+  Widget _buildLanguageToggle(BuildContext context) {
+    return BlocBuilder<AppConfigCubit, AppConfigStates>(
+      bloc: sl<AppConfigCubit>(),
+      builder: (_, configState) => LanguageToggleSwitch(
+        currentLocale: configState.locale,
+        onLocaleSelected: (locale) =>
+            sl<AppConfigCubit>().doAction(ChangeLocaleAction(locale)),
+      ),
+    );
+  }
+}
+
+class _AvatarItem extends StatelessWidget {
+  final String assetPath;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _AvatarItem({
+    required this.assetPath,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: EdgeInsetsDirectional.symmetric(horizontal: 6.w),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.transparent,
+            width: 3,
+          ),
+        ),
+        child: CircleAvatar(
+          radius: isSelected ? 44.r : 36.r,
+          backgroundColor: AppColors.surface,
+          backgroundImage: AssetImage(assetPath),
+        ),
       ),
     );
   }

@@ -1,5 +1,5 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:movies_app/core/base/base_cubit.dart';
 import 'package:movies_app/core/network/api_result.dart';
 import 'package:movies_app/core/network/resources.dart';
 import 'package:movies_app/features/auth/domain/use_case/login_with_email_usecase.dart';
@@ -7,38 +7,23 @@ import 'package:movies_app/features/auth/domain/use_case/login_with_google_useca
 import 'login_states.dart';
 
 @injectable
-class LoginCubit
-    extends BaseCubit<LoginStates, LoginAction, LoginNavigationAction> {
+class LoginCubit extends Cubit<LoginState> {
   final LoginWithEmailUseCase _loginWithEmailUseCase;
   final LoginWithGoogleUseCase _loginWithGoogleUseCase;
 
   LoginCubit(this._loginWithEmailUseCase, this._loginWithGoogleUseCase)
-    : super(const LoginStates());
+    : super(const LoginState());
 
-  @override
-  Future<void> doAction(LoginAction action) async {
-    switch (action) {
-      case SubmitLoginAction():
-        await _submitLogin(action.email, action.password);
-      case LoginWithGoogleAction():
-        await _loginWithGoogle();
-      case NavigateToRegisterAction():
-        emitNavigation(NavigateToRegisterScreen());
-      case NavigateToForgotPasswordAction():
-        emitNavigation(NavigateToForgotPasswordScreen());
-    }
-  }
-
-  Future<void> _submitLogin(String email, String password) async {
+  Future<void> loginWithEmail(String email, String password) async {
+    if (state.isAnyLoading) return;
     emit(state.copyWith(loginResource: const Resources.loading()));
     final result = await _loginWithEmailUseCase(
       LoginWithEmailParams(email: email, password: password),
     );
     switch (result) {
-      case Success():
+      case Success<dynamic>():
         emit(state.copyWith(loginResource: const Resources.success()));
-        emitNavigation(NavigateToHomeScreen());
-      case Failure(:final exception, :final message):
+      case Failure<dynamic>(:final exception, :final message):
         emit(
           state.copyWith(
             loginResource: Resources.failure(
@@ -47,18 +32,17 @@ class LoginCubit
             ),
           ),
         );
-        emitNavigation(ShowLoginErrorToast(errorMessage: message));
     }
   }
 
-  Future<void> _loginWithGoogle() async {
+  Future<void> loginWithGoogle() async {
+    if (state.isAnyLoading) return;
     emit(state.copyWith(googleLoginResource: const Resources.loading()));
     final result = await _loginWithGoogleUseCase(null);
     switch (result) {
-      case Success():
+      case Success<dynamic>():
         emit(state.copyWith(googleLoginResource: const Resources.success()));
-        emitNavigation(NavigateToHomeScreen());
-      case Failure(:final exception, :final message):
+      case Failure<dynamic>(:final exception, :final message):
         emit(
           state.copyWith(
             googleLoginResource: Resources.failure(
@@ -67,7 +51,6 @@ class LoginCubit
             ),
           ),
         );
-        emitNavigation(ShowLoginErrorToast(errorMessage: message));
     }
   }
 }

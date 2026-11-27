@@ -33,13 +33,10 @@ void main() {
     when(() => mockAppConfigCubit.doAction(any())).thenAnswer((_) async {});
     when(() => mockAppConfigCubit.close()).thenAnswer((_) async {});
 
-    when(() => mockLoginCubit.state).thenReturn(const LoginStates());
+    when(() => mockLoginCubit.state).thenReturn(const LoginState());
     when(
       () => mockLoginCubit.stream,
-    ).thenAnswer((_) => const Stream<LoginStates>.empty());
-    when(
-      () => mockLoginCubit.navigation,
-    ).thenAnswer((_) => const Stream<LoginNavigationAction>.empty());
+    ).thenAnswer((_) => const Stream<LoginState>.empty());
     when(() => mockLoginCubit.close()).thenAnswer((_) async {});
 
     sl.registerSingleton<AppConfigCubit>(mockAppConfigCubit);
