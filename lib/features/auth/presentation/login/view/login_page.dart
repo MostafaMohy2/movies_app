@@ -188,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildOrDivider(BuildContext context) {
     return Row(
       children: [
-        const Expanded(child: Divider(color: AppColors.border)),
+        const Expanded(child: Divider(color: AppColors.primary)),
         Padding(
           padding: EdgeInsetsDirectional.symmetric(horizontal: 12.w),
           child: Text(
@@ -196,7 +196,7 @@ class _LoginPageState extends State<LoginPage> {
             style: AppTypography.bodyMedium,
           ),
         ),
-        const Expanded(child: Divider(color: AppColors.border)),
+        const Expanded(child: Divider(color: AppColors.primary)),
       ],
     );
   }
@@ -206,10 +206,11 @@ class _LoginPageState extends State<LoginPage> {
       label: context.locale.loginWithGoogle,
       isLoading: state.googleLoginResource.isLoading,
       isEnabled: !state.isAnyLoading,
-      leading: Icon(
-        Icons.g_mobiledata_rounded,
-        size: 28.r,
-        color: AppColors.background,
+      leading: Image.asset(
+        'assets/images/icon _google_.png',
+        width: 24.r,
+        height: 24.r,
+        fit: BoxFit.contain,
       ),
       onPressed: _cubit.loginWithGoogle,
     );
