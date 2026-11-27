@@ -123,4 +123,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forgotPassword => 'Forgot Password';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get confirmPassword => 'Confirm Password';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get phoneNumber => 'Phone Number';
+
+  @override
+  String get forgotPasswordQuestion => 'Forget Password ?';
+
+  @override
+  String get dontHaveAccount => 'Don\'t Have Account ? ';
+
+  @override
+  String get createOne => 'Create One';
+
+  @override
+  String get alreadyHaveAccount => 'Already Have Account ? ';
+
+  @override
+  String get orDivider => 'OR';
+
+  @override
+  String get loginWithGoogle => 'Login With Google';
+
+  @override
+  String get createAccount => 'Create Account';
+
+  @override
+  String get verifyEmail => 'Verify Email';
+
+  @override
+  String get avatar => 'Avatar';
+
+  @override
+  String get resetEmailSent => 'Password reset email sent. Check your inbox.';
+
+  @override
+  String get googleSignInCancelled => 'Google sign-in was cancelled.';
+
+  @override
+  String get togglePasswordVisibility => 'Toggle password visibility';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get invalidPhone => 'Invalid phone number';
+
+  @override
+  String get phoneCantBeEmpty => 'Phone number can\'t be empty';
+
+  @override
+  String get phoneIsInInvalidFormat => 'Please enter a valid phone number';
 }

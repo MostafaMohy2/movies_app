@@ -63,6 +63,20 @@ class Validator {
     return null;
   }
 
+  static String? phoneValidator(String? input, AppLocalizations locale) {
+    if (input == null) {
+      return locale.invalidPhone;
+    }
+    final trimmed = input.trim();
+    if (trimmed.isEmpty) {
+      return locale.phoneCantBeEmpty;
+    }
+    if (!RegExp(r'^\+?[0-9]{10,15}$').hasMatch(trimmed)) {
+      return locale.phoneIsInInvalidFormat;
+    }
+    return null;
+  }
+
   @Deprecated('Use passwordConfirmationValidator instead (fixed typo)')
   static String? passwordConfirmaitonValidator(
     String? input,

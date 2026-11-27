@@ -325,6 +325,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Forgot Password'**
   String get forgotPassword;
+
+  /// Email field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// Password field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// Confirm password field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get confirmPassword;
+
+  /// Name field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// Phone number field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// Link text to forgot password screen
+  ///
+  /// In en, this message translates to:
+  /// **'Forget Password ?'**
+  String get forgotPasswordQuestion;
+
+  /// Prompt text before create account link
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'\'t Have Account ? '**
+  String get dontHaveAccount;
+
+  /// Link text to register screen
+  ///
+  /// In en, this message translates to:
+  /// **'Create One'**
+  String get createOne;
+
+  /// Prompt text before login link
+  ///
+  /// In en, this message translates to:
+  /// **'Already Have Account ? '**
+  String get alreadyHaveAccount;
+
+  /// Divider label between email and social login
+  ///
+  /// In en, this message translates to:
+  /// **'OR'**
+  String get orDivider;
+
+  /// Google login button label
+  ///
+  /// In en, this message translates to:
+  /// **'Login With Google'**
+  String get loginWithGoogle;
+
+  /// Create account button label
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get createAccount;
+
+  /// Verify email button label
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Email'**
+  String get verifyEmail;
+
+  /// Avatar picker label
+  ///
+  /// In en, this message translates to:
+  /// **'Avatar'**
+  String get avatar;
+
+  /// Feedback shown after sending reset email
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset email sent. Check your inbox.'**
+  String get resetEmailSent;
+
+  /// Message when user cancels Google sign-in
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in was cancelled.'**
+  String get googleSignInCancelled;
+
+  /// Semantic tooltip for password visibility icon button
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle password visibility'**
+  String get togglePasswordVisibility;
+
+  /// Semantic tooltip for back button
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// Validation error for null phone number
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid phone number'**
+  String get invalidPhone;
+
+  /// Validation error when phone number is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number can\'\'t be empty'**
+  String get phoneCantBeEmpty;
+
+  /// Validation error when phone number format is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid phone number'**
+  String get phoneIsInInvalidFormat;
 }
 
 class _AppLocalizationsDelegate

@@ -124,4 +124,68 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get forgotPassword => 'نسيت كلمة المرور';
+
+  @override
+  String get email => 'البريد الإلكتروني';
+
+  @override
+  String get password => 'كلمة المرور';
+
+  @override
+  String get confirmPassword => 'تأكيد كلمة المرور';
+
+  @override
+  String get name => 'الاسم';
+
+  @override
+  String get phoneNumber => 'رقم الهاتف';
+
+  @override
+  String get forgotPasswordQuestion => 'نسيت كلمة المرور ؟';
+
+  @override
+  String get dontHaveAccount => 'ليس لديك حساب ؟ ';
+
+  @override
+  String get createOne => 'أنشئ حساباً';
+
+  @override
+  String get alreadyHaveAccount => 'لديك حساب بالفعل ؟ ';
+
+  @override
+  String get orDivider => 'أو';
+
+  @override
+  String get loginWithGoogle => 'تسجيل الدخول عبر جوجل';
+
+  @override
+  String get createAccount => 'إنشاء حساب';
+
+  @override
+  String get verifyEmail => 'التحقق من البريد الإلكتروني';
+
+  @override
+  String get avatar => 'الصورة الرمزية';
+
+  @override
+  String get resetEmailSent =>
+      'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.';
+
+  @override
+  String get googleSignInCancelled => 'تم إلغاء تسجيل الدخول عبر جوجل.';
+
+  @override
+  String get togglePasswordVisibility => 'إظهار أو إخفاء كلمة المرور';
+
+  @override
+  String get back => 'رجوع';
+
+  @override
+  String get invalidPhone => 'رقم الهاتف غير صالح';
+
+  @override
+  String get phoneCantBeEmpty => 'لا يمكن أن يكون رقم الهاتف فارغاً';
+
+  @override
+  String get phoneIsInInvalidFormat => 'يرجى إدخال رقم هاتف صالح';
 }

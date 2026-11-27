@@ -6,9 +6,9 @@
 | :--- | :--- | :--- |
 | `ApiConstants` | `lib/core/network/api_constants.dart` | Base URL (`https://api.themoviedb.org/3/`) and 20s connect/receive/send timeouts |
 | `DioClient` | `lib/core/network/dio_client.dart` | Singleton `Dio` instance (`DioClient.client`) bound in `DiModule` with JSON headers and `LogInterceptor` |
-| Feature `*RemoteDataSource` | `lib/features/<feature>/data/datasource/remote/` | Feature-scoped Retrofit `@RestApi()` clients receiving injected `Dio` via each feature's DI module |
-| `safeCall` | `lib/core/network/safe_call.dart` | Executes async network calls and maps exceptions via `ErrorParser.parse` |
-| `ErrorParser` | `lib/core/network/error_parser.dart` | Maps `DioException`, `SocketException`, `TimeoutException`, `FormatException`, and `Object` to `Failure<T>` |
+| Feature `*RemoteDataSource` | `lib/features/<feature>/data/datasource/remote/` | Feature-scoped remote clients (Retrofit `@RestApi()` or SDK-backed data sources such as Firebase Auth) |
+| `safeCall` | `lib/core/network/safe_call.dart` | Executes async network/SDK calls and maps exceptions via `ErrorParser.parse` |
+| `ErrorParser` | `lib/core/network/error_parser.dart` | Maps `DioException`, `FirebaseAuthException`, `GoogleSignInException`, `SocketException`, `TimeoutException`, `FormatException`, and `Object` to `Failure<T>` |
 | `Errors` | `lib/core/network/errors.dart` | Sealed error hierarchy (`NetworkError`, `TimeoutError`, `ParseError`, `ServerError`, `LoginRequired`, `JustMessage`, `Unknown`) |
 | `ApiResult<T>` | `lib/core/network/api_result.dart` | Sealed data-layer envelope (`Success<T>`, `Failure<T>`) |
 | `Resources<T>` | `lib/core/network/resources.dart` | UI state envelope (`Status { initial, loading, success, error }`) |
@@ -16,13 +16,13 @@
 ## 2. Rules
 
 - Repository methods return `Future<ApiResult<T>>` wrapped with `safeCall(...)`.
-- Never use a shared monolithic `ApiService`; each feature defines its own `<Feature>RemoteDataSource` (`@RestApi()`) and feature DI `@module`.
-- Never call `Dio` directly from Cubits, UseCases, or Views.
+- Never use a shared monolithic `ApiService`; each feature defines its own `<Feature>RemoteDataSource` and feature DI `@module`.
+- Never call `Dio` or Firebase SDKs directly from Cubits, UseCases, or Views.
 - Never hardcode API keys/tokens in `ApiConstants` or `DioClient` (`--dart-define` / `.env` config required).
-- Update §3 below whenever an endpoint is added, modified, or removed.
+- Update §3 below whenever an endpoint or remote provider is added, modified, or removed.
 
-## 3. Endpoint Inventory
+## 3. Endpoint & Provider Inventory
 
-| Feature | Method & Path | DataSource | Request / Response DTO | Notes |
+| Feature | Provider / Method & Path | DataSource | Request / Response Model | Notes |
 | :--- | :--- | :--- | :--- | :--- |
-| `auth` | *(pending API spec)* | `AuthRemoteDataSource` | — | Scaffold created; awaiting endpoint confirmation |
+| `auth` | Firebase Auth (`signInWithEmailAndPassword`, `createUserWithEmailAndPassword`, `sendPasswordResetEmail`, `signOut`, Google Sign-In) | `AuthFirebaseDataSourceImpl` (`AuthRemoteDataSource`) | `User` -> `AuthUserEntity` via `AuthMapper` | Uses Firebase Auth + `google_sign_in` wrapped in `safeCall` |

@@ -11,11 +11,19 @@ class ForgotPasswordStates {
 
 sealed class ForgotPasswordAction {}
 
+class SubmitForgotPasswordAction extends ForgotPasswordAction {
+  final String email;
+
+  SubmitForgotPasswordAction({required this.email});
+}
+
 class NavigateBackToLoginAction extends ForgotPasswordAction {}
 
 sealed class ForgotPasswordNavigationAction {}
 
 class NavigateBackToLoginScreen extends ForgotPasswordNavigationAction {}
+
+class ShowResetSuccessToast extends ForgotPasswordNavigationAction {}
 
 class ShowForgotPasswordErrorToast extends ForgotPasswordNavigationAction {
   final String errorMessage;

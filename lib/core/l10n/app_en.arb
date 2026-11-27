@@ -151,5 +151,89 @@
   "forgotPassword": "Forgot Password",
   "@forgotPassword": {
     "description": "Forgot password screen title"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Email field hint"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "Password field hint"
+  },
+  "confirmPassword": "Confirm Password",
+  "@confirmPassword": {
+    "description": "Confirm password field hint"
+  },
+  "name": "Name",
+  "@name": {
+    "description": "Name field hint"
+  },
+  "phoneNumber": "Phone Number",
+  "@phoneNumber": {
+    "description": "Phone number field hint"
+  },
+  "forgotPasswordQuestion": "Forget Password ?",
+  "@forgotPasswordQuestion": {
+    "description": "Link text to forgot password screen"
+  },
+  "dontHaveAccount": "Don''t Have Account ? ",
+  "@dontHaveAccount": {
+    "description": "Prompt text before create account link"
+  },
+  "createOne": "Create One",
+  "@createOne": {
+    "description": "Link text to register screen"
+  },
+  "alreadyHaveAccount": "Already Have Account ? ",
+  "@alreadyHaveAccount": {
+    "description": "Prompt text before login link"
+  },
+  "orDivider": "OR",
+  "@orDivider": {
+    "description": "Divider label between email and social login"
+  },
+  "loginWithGoogle": "Login With Google",
+  "@loginWithGoogle": {
+    "description": "Google login button label"
+  },
+  "createAccount": "Create Account",
+  "@createAccount": {
+    "description": "Create account button label"
+  },
+  "verifyEmail": "Verify Email",
+  "@verifyEmail": {
+    "description": "Verify email button label"
+  },
+  "avatar": "Avatar",
+  "@avatar": {
+    "description": "Avatar picker label"
+  },
+  "resetEmailSent": "Password reset email sent. Check your inbox.",
+  "@resetEmailSent": {
+    "description": "Feedback shown after sending reset email"
+  },
+  "googleSignInCancelled": "Google sign-in was cancelled.",
+  "@googleSignInCancelled": {
+    "description": "Message when user cancels Google sign-in"
+  },
+  "togglePasswordVisibility": "Toggle password visibility",
+  "@togglePasswordVisibility": {
+    "description": "Semantic tooltip for password visibility icon button"
+  },
+  "back": "Back",
+  "@back": {
+    "description": "Semantic tooltip for back button"
+  },
+  "invalidPhone": "Invalid phone number",
+  "@invalidPhone": {
+    "description": "Validation error for null phone number"
+  },
+  "phoneCantBeEmpty": "Phone number can''t be empty",
+  "@phoneCantBeEmpty": {
+    "description": "Validation error when phone number is empty"
+  },
+  "phoneIsInInvalidFormat": "Please enter a valid phone number",
+  "@phoneIsInInvalidFormat": {
+    "description": "Validation error when phone number format is invalid"
   }
 }
