@@ -33,6 +33,7 @@ Handles user authentication flows using **Firebase Authentication** and **Google
 - Screen & UI labels: `login`, `register`, `forgotPassword`, `email`, `password`, `confirmPassword`, `name`, `phoneNumber`, `forgotPasswordQuestion`, `dontHaveAccount`, `createOne`, `alreadyHaveAccount`, `orDivider`, `loginWithGoogle`, `createAccount`, `verifyEmail`, `avatar`, `resetEmailSent`, `googleSignInCancelled`, `togglePasswordVisibility`, `back`
 - Validation keys wired to `Validator`: `invalidName`, `nameCantBeEmpty`, `nameisinInvalidFormat`, `invalidEmail`, `emailCantBeEmpty`, `emailIsInInvalidFormat`, `invalidPassword`, `passwordCantBeEmpty`, `passwordIsInInvalidFormat`, `invalidPasswordConfirmation`, `passwordConfirmationCantBeEmpty`, `passwordsDoNotMatch`, `invalidPhone`, `phoneCantBeEmpty`, `phoneIsInInvalidFormat`
 
-## 5. Known Notes
+## 5. Firebase Configuration
 
-- `Firebase.initializeApp()` in `lib/main.dart` is guarded in a `try/catch` until `flutterfire configure` is run to generate `firebase_options.dart` and platform config files (`google-services.json`, `GoogleService-Info.plist`).
+- Configured via `flutterfire configure` (`lib/firebase_options.dart`, `firebase.json`, `android/app/google-services.json`, and `com.google.gms.google-services` Gradle plugin).
+- `lib/main.dart` initializes Firebase with `Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)`.
