@@ -37,6 +37,9 @@ void main() {
     when(
       () => mockLoginCubit.stream,
     ).thenAnswer((_) => const Stream<LoginState>.empty());
+    when(
+      () => mockLoginCubit.navigation,
+    ).thenAnswer((_) => const Stream<LoginNavigationAction>.empty());
     when(() => mockLoginCubit.close()).thenAnswer((_) async {});
 
     sl.registerSingleton<AppConfigCubit>(mockAppConfigCubit);

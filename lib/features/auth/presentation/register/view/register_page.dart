@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -47,9 +48,26 @@ class _RegisterPageState extends State<RegisterPage> {
     viewportFraction: 0.4,
     initialPage: 0,
   );
+  StreamSubscription<RegisterNavigationAction>? _navSub;
+
+  @override
+  void initState() {
+    super.initState();
+    _navSub = _cubit.navigation.listen(_handleNavigation);
+  }
+
+  void _handleNavigation(RegisterNavigationAction action) {
+    switch (action) {
+      case NavigateToLoginScreen():
+        Navigator.pushNamedAndRemoveUntil(context, Routes.login, (_) => false);
+      case ShowRegisterErrorToast(:final errorMessage):
+        context.showErrorSnackBar(errorMessage);
+    }
+  }
 
   @override
   void dispose() {
+    _navSub?.cancel();
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -62,11 +80,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _onRegisterPressed() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    _cubit.register(
-      name: _nameController.text.trim(),
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
-      phone: _phoneController.text.trim(),
+    _cubit.doAction(
+      SubmitRegisterAction(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        phone: _phoneController.text.trim(),
+      ),
     );
   }
 
@@ -74,59 +94,50 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _cubit,
-      child: BlocConsumer<RegisterCubit, RegisterState>(
-        listener: _handleStateChange,
-        builder: (ctx, state) => _buildScaffold(ctx, state),
-      ),
-    );
-  }
-
-  void _handleStateChange(BuildContext context, RegisterState state) {
-    if (state.registerResource.isSuccess) {
-      Navigator.pushNamedAndRemoveUntil(context, Routes.login, (_) => false);
-    } else if (state.registerResource.isError) {
-      context.showErrorSnackBar(
-        state.registerResource.message ?? context.locale.register,
-      );
-    }
-  }
-
-  Widget _buildScaffold(BuildContext context, RegisterState state) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: _buildAppBar(context),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsetsDirectional.symmetric(
-            horizontal: 24.w,
-            vertical: 16.h,
-          ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildAvatarCarousel(context, state),
-                SizedBox(height: 8.h),
-                Text(context.locale.avatar, style: AppTypography.bodyMedium),
-                SizedBox(height: 24.h),
-                _buildNameField(context),
-                SizedBox(height: 16.h),
-                _buildEmailField(context),
-                SizedBox(height: 16.h),
-                _buildPasswordField(context),
-                SizedBox(height: 16.h),
-                _buildConfirmPasswordField(context),
-                SizedBox(height: 16.h),
-                _buildPhoneField(context),
-                SizedBox(height: 28.h),
-                _buildRegisterButton(context, state),
-                SizedBox(height: 16.h),
-                _buildLoginRow(context),
-                SizedBox(height: 24.h),
-                _buildLanguageToggle(context),
-                SizedBox(height: 16.h),
-              ],
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: _buildAppBar(context),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsetsDirectional.symmetric(
+              horizontal: 24.w,
+              vertical: 16.h,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  BlocBuilder<RegisterCubit, RegisterState>(
+                    buildWhen: (prev, curr) =>
+                        prev.selectedAvatarAsset != curr.selectedAvatarAsset,
+                    builder: (ctx, state) => _buildAvatarCarousel(ctx, state),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(context.locale.avatar, style: AppTypography.bodyMedium),
+                  SizedBox(height: 24.h),
+                  _buildNameField(context),
+                  SizedBox(height: 16.h),
+                  _buildEmailField(context),
+                  SizedBox(height: 16.h),
+                  _buildPasswordField(context),
+                  SizedBox(height: 16.h),
+                  _buildConfirmPasswordField(context),
+                  SizedBox(height: 16.h),
+                  _buildPhoneField(context),
+                  SizedBox(height: 28.h),
+                  BlocBuilder<RegisterCubit, RegisterState>(
+                    buildWhen: (prev, curr) =>
+                        prev.registerResource != curr.registerResource,
+                    builder: (ctx, state) => _buildRegisterButton(ctx, state),
+                  ),
+                  SizedBox(height: 16.h),
+                  _buildLoginRow(context),
+                  SizedBox(height: 24.h),
+                  _buildLanguageToggle(context),
+                  SizedBox(height: 16.h),
+                ],
+              ),
             ),
           ),
         ),
@@ -144,7 +155,7 @@ class _RegisterPageState extends State<RegisterPage> {
           Icons.arrow_back_ios_new_rounded,
           color: AppColors.primary,
         ),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => _cubit.doAction(const NavigateToLoginAction()),
       ),
       title: Text(
         context.locale.register,
@@ -159,7 +170,9 @@ class _RegisterPageState extends State<RegisterPage> {
       child: PageView.builder(
         controller: _avatarPageController,
         itemCount: _kAvatarAssets.length,
-        onPageChanged: (index) => _cubit.selectAvatar(_kAvatarAssets[index]),
+        onPageChanged: (index) => _cubit.doAction(
+          SelectAvatarAction(avatarAsset: _kAvatarAssets[index]),
+        ),
         itemBuilder: (_, index) {
           final asset = _kAvatarAssets[index];
           final isSelected = state.selectedAvatarAsset == asset;
@@ -172,7 +185,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
               );
-              _cubit.selectAvatar(asset);
+              _cubit.doAction(SelectAvatarAction(avatarAsset: asset));
             },
           );
         },
@@ -260,7 +273,7 @@ class _RegisterPageState extends State<RegisterPage> {
           style: AppTypography.bodyMedium,
         ),
         GestureDetector(
-          onTap: () => Navigator.pop(context),
+          onTap: () => _cubit.doAction(const NavigateToLoginAction()),
           child: Text(
             context.locale.login,
             style: AppTypography.bodyMedium.copyWith(

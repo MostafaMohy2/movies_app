@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,9 +23,33 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final ForgotPasswordCubit _cubit = sl<ForgotPasswordCubit>();
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  StreamSubscription<ForgotPasswordNavigationAction>? _navSub;
+
+  @override
+  void initState() {
+    super.initState();
+    _navSub = _cubit.navigation.listen(_handleNavigation);
+  }
+
+  void _handleNavigation(ForgotPasswordNavigationAction action) {
+    switch (action) {
+      case NavigateBackToLoginScreen():
+        Navigator.pop(context);
+      case ShowResetSuccessToast():
+        context.showSnackBar(
+          SnackBar(
+            content: Text(context.locale.resetEmailSent),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      case ShowForgotPasswordErrorToast(:final errorMessage):
+        context.showErrorSnackBar(errorMessage);
+    }
+  }
 
   @override
   void dispose() {
+    _navSub?.cancel();
     _emailController.dispose();
     _cubit.close();
     super.dispose();
@@ -32,57 +57,41 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   void _onVerifyPressed() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    _cubit.sendReset(_emailController.text.trim());
+    _cubit.doAction(
+      SubmitForgotPasswordAction(email: _emailController.text.trim()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _cubit,
-      child: BlocConsumer<ForgotPasswordCubit, ForgotPasswordState>(
-        listener: _handleStateChange,
-        builder: (ctx, state) => _buildScaffold(ctx, state),
-      ),
-    );
-  }
-
-  void _handleStateChange(BuildContext context, ForgotPasswordState state) {
-    if (state.resetResource.isSuccess) {
-      context.showSnackBar(
-        SnackBar(
-          content: Text(context.locale.resetEmailSent),
-          backgroundColor: AppColors.success,
-        ),
-      );
-    } else if (state.resetResource.isError) {
-      context.showErrorSnackBar(
-        state.resetResource.message ?? context.locale.forgotPassword,
-      );
-    }
-  }
-
-  Widget _buildScaffold(BuildContext context, ForgotPasswordState state) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: _buildAppBar(context),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsetsDirectional.symmetric(
-            horizontal: 24.w,
-            vertical: 24.h,
-          ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: 24.h),
-                _buildIllustration(),
-                SizedBox(height: 40.h),
-                _buildEmailField(context),
-                SizedBox(height: 28.h),
-                _buildVerifyButton(context, state),
-              ],
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: _buildAppBar(context),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsetsDirectional.symmetric(
+              horizontal: 24.w,
+              vertical: 24.h,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 24.h),
+                  _buildIllustration(),
+                  SizedBox(height: 40.h),
+                  _buildEmailField(context),
+                  SizedBox(height: 28.h),
+                  BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
+                    buildWhen: (prev, curr) =>
+                        prev.resetResource != curr.resetResource,
+                    builder: (ctx, state) => _buildVerifyButton(ctx, state),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -100,7 +109,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           Icons.arrow_back_ios_new_rounded,
           color: AppColors.primary,
         ),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => _cubit.doAction(const NavigateBackToLoginAction()),
       ),
       title: Text(
         context.locale.forgotPassword,

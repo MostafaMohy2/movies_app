@@ -20,3 +20,48 @@ class LoginState {
   bool get isAnyLoading =>
       loginResource.isLoading || googleLoginResource.isLoading;
 }
+
+sealed class LoginAction {
+  const LoginAction();
+}
+
+class SubmitLoginAction extends LoginAction {
+  final String email;
+  final String password;
+
+  const SubmitLoginAction({required this.email, required this.password});
+}
+
+class LoginWithGoogleAction extends LoginAction {
+  const LoginWithGoogleAction();
+}
+
+class NavigateToRegisterAction extends LoginAction {
+  const NavigateToRegisterAction();
+}
+
+class NavigateToForgotPasswordAction extends LoginAction {
+  const NavigateToForgotPasswordAction();
+}
+
+sealed class LoginNavigationAction {
+  const LoginNavigationAction();
+}
+
+class NavigateToHomeScreen extends LoginNavigationAction {
+  const NavigateToHomeScreen();
+}
+
+class NavigateToRegisterScreen extends LoginNavigationAction {
+  const NavigateToRegisterScreen();
+}
+
+class NavigateToForgotPasswordScreen extends LoginNavigationAction {
+  const NavigateToForgotPasswordScreen();
+}
+
+class ShowLoginErrorToast extends LoginNavigationAction {
+  final String errorMessage;
+
+  const ShowLoginErrorToast(this.errorMessage);
+}

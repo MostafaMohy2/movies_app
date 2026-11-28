@@ -5,6 +5,7 @@ import 'package:movies_app/core/network/errors.dart';
 import 'package:movies_app/features/auth/domain/entities/auth_user_entity.dart';
 import 'package:movies_app/features/auth/domain/use_cases/register_user_usecase.dart';
 import 'package:movies_app/features/auth/presentation/register/view/register_cubit.dart';
+import 'package:movies_app/features/auth/presentation/register/view/register_states.dart';
 
 class _MockRegisterUserUseCase extends Mock implements RegisterUserUseCase {}
 
@@ -46,28 +47,41 @@ void main() {
       expect(cubit.state.registerResource.isInitial, isTrue);
     });
 
-    test('selectAvatar_updatesSelectedAvatarAsset', () {
+    test('selectAvatarAction_updatesSelectedAvatarAsset', () async {
       const nextAvatar = 'assets/images/Component 11 – 2.png';
-      cubit.selectAvatar(nextAvatar);
+      await cubit.doAction(const SelectAvatarAction(avatarAsset: nextAvatar));
       expect(cubit.state.selectedAvatarAsset, nextAvatar);
     });
 
-    test('register_success_emitsSuccessResource', () async {
-      when(
-        () => mockRegisterUseCase(any()),
-      ).thenAnswer((_) async => const Success(tUser));
-
-      await cubit.register(
-        name: 'Test User',
-        email: 'test@example.com',
-        password: 'Password1!',
-        phone: '+201000000000',
-      );
-
-      expect(cubit.state.registerResource.isSuccess, isTrue);
+    test('navigateToLoginAction_emitsNavigateToLoginScreen', () async {
+      final navFuture = cubit.navigation.first;
+      await cubit.doAction(const NavigateToLoginAction());
+      expect(await navFuture, isA<NavigateToLoginScreen>());
     });
 
-    test('register_failure_emitsErrorResourceWithMessage', () async {
+    test(
+      'submitRegisterAction_success_emitsSuccessAndNavigatesToLogin',
+      () async {
+        when(
+          () => mockRegisterUseCase(any()),
+        ).thenAnswer((_) async => const Success(tUser));
+
+        final navFuture = cubit.navigation.first;
+        await cubit.doAction(
+          const SubmitRegisterAction(
+            name: 'Test User',
+            email: 'test@example.com',
+            password: 'Password1!',
+            phone: '+201000000000',
+          ),
+        );
+
+        expect(cubit.state.registerResource.isSuccess, isTrue);
+        expect(await navFuture, isA<NavigateToLoginScreen>());
+      },
+    );
+
+    test('submitRegisterAction_failure_emitsErrorAndToast', () async {
       when(() => mockRegisterUseCase(any())).thenAnswer(
         (_) async => const Failure(
           exception: JustMessage('Email already in use'),
@@ -75,15 +89,23 @@ void main() {
         ),
       );
 
-      await cubit.register(
-        name: 'Test User',
-        email: 'test@example.com',
-        password: 'Password1!',
-        phone: '+201000000000',
+      final navFuture = cubit.navigation.first;
+      await cubit.doAction(
+        const SubmitRegisterAction(
+          name: 'Test User',
+          email: 'test@example.com',
+          password: 'Password1!',
+          phone: '+201000000000',
+        ),
       );
 
       expect(cubit.state.registerResource.isError, isTrue);
-      expect(cubit.state.registerResource.message, 'Email already in use');
+      final nav = await navFuture;
+      expect(nav, isA<ShowRegisterErrorToast>());
+      expect(
+        (nav as ShowRegisterErrorToast).errorMessage,
+        'Email already in use',
+      );
     });
   });
 }

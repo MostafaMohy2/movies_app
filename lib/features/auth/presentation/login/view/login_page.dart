@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,9 +28,30 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  StreamSubscription<LoginNavigationAction>? _navSub;
+
+  @override
+  void initState() {
+    super.initState();
+    _navSub = _cubit.navigation.listen(_handleNavigation);
+  }
+
+  void _handleNavigation(LoginNavigationAction action) {
+    switch (action) {
+      case NavigateToHomeScreen():
+        Navigator.pushNamedAndRemoveUntil(context, Routes.home, (_) => false);
+      case NavigateToRegisterScreen():
+        Navigator.pushNamed(context, Routes.register);
+      case NavigateToForgotPasswordScreen():
+        Navigator.pushNamed(context, Routes.forgotPassword);
+      case ShowLoginErrorToast(:final errorMessage):
+        context.showErrorSnackBar(errorMessage);
+    }
+  }
 
   @override
   void dispose() {
+    _navSub?.cancel();
     _emailController.dispose();
     _passwordController.dispose();
     _cubit.close();
@@ -38,9 +60,11 @@ class _LoginPageState extends State<LoginPage> {
 
   void _onLoginPressed() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    _cubit.loginWithEmail(
-      _emailController.text.trim(),
-      _passwordController.text,
+    _cubit.doAction(
+      SubmitLoginAction(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      ),
     );
   }
 
@@ -48,65 +72,62 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _cubit,
-      child: BlocConsumer<LoginCubit, LoginState>(
-        listener: _handleStateChange,
-        builder: (ctx, state) => _buildScaffold(ctx, state),
-      ),
-    );
-  }
-
-  void _handleStateChange(BuildContext context, LoginState state) {
-    if (state.loginResource.isSuccess || state.googleLoginResource.isSuccess) {
-      Navigator.pushNamedAndRemoveUntil(context, Routes.home, (_) => false);
-    } else if (state.loginResource.isError) {
-      context.showErrorSnackBar(
-        state.loginResource.message ?? context.locale.login,
-      );
-    } else if (state.googleLoginResource.isError) {
-      context.showErrorSnackBar(
-        state.googleLoginResource.message ?? context.locale.loginWithGoogle,
-      );
-    }
-  }
-
-  Widget _buildScaffold(BuildContext context, LoginState state) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsetsDirectional.symmetric(
-            horizontal: 24.w,
-            vertical: 24.h,
-          ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: 32.h),
-                _buildLogo(),
-                SizedBox(height: 40.h),
-                _buildEmailField(context),
-                SizedBox(height: 16.h),
-                _buildPasswordField(context),
-                SizedBox(height: 8.h),
-                _buildForgotPasswordLink(context),
-                SizedBox(height: 24.h),
-                _buildLoginButton(context, state),
-                SizedBox(height: 16.h),
-                _buildCreateAccountRow(context),
-                SizedBox(height: 24.h),
-                _buildOrDivider(context),
-                SizedBox(height: 24.h),
-                _buildGoogleButton(context, state),
-                SizedBox(height: 32.h),
-                _buildLanguageToggle(context),
-                SizedBox(height: 16.h),
-              ],
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsetsDirectional.symmetric(
+              horizontal: 24.w,
+              vertical: 24.h,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 32.h),
+                  _buildLogo(),
+                  SizedBox(height: 40.h),
+                  _buildEmailField(context),
+                  SizedBox(height: 16.h),
+                  _buildPasswordField(context),
+                  SizedBox(height: 8.h),
+                  _buildForgotPasswordLink(context),
+                  SizedBox(height: 24.h),
+                  _buildLoginActionsSection(context),
+                  SizedBox(height: 32.h),
+                  _buildLanguageToggle(context),
+                  SizedBox(height: 16.h),
+                ],
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildLoginActionsSection(BuildContext context) {
+    return Column(
+      children: [
+        BlocBuilder<LoginCubit, LoginState>(
+          buildWhen: (prev, curr) =>
+              prev.loginResource != curr.loginResource ||
+              prev.isAnyLoading != curr.isAnyLoading,
+          builder: (ctx, state) => _buildLoginButton(ctx, state),
+        ),
+        SizedBox(height: 16.h),
+        _buildCreateAccountRow(context),
+        SizedBox(height: 24.h),
+        _buildOrDivider(context),
+        SizedBox(height: 24.h),
+        BlocBuilder<LoginCubit, LoginState>(
+          buildWhen: (prev, curr) =>
+              prev.googleLoginResource != curr.googleLoginResource ||
+              prev.isAnyLoading != curr.isAnyLoading,
+          builder: (ctx, state) => _buildGoogleButton(ctx, state),
+        ),
+      ],
     );
   }
 
@@ -147,7 +168,8 @@ class _LoginPageState extends State<LoginPage> {
     return Align(
       alignment: AlignmentDirectional.centerEnd,
       child: TextButton(
-        onPressed: () => Navigator.pushNamed(context, Routes.forgotPassword),
+        onPressed: () =>
+            _cubit.doAction(const NavigateToForgotPasswordAction()),
         child: Text(
           context.locale.forgotPasswordQuestion,
           style: AppTypography.bodyMedium.copyWith(color: AppColors.primary),
@@ -172,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         Text(context.locale.dontHaveAccount, style: AppTypography.bodyMedium),
         GestureDetector(
-          onTap: () => Navigator.pushNamed(context, Routes.register),
+          onTap: () => _cubit.doAction(const NavigateToRegisterAction()),
           child: Text(
             context.locale.createOne,
             style: AppTypography.bodyMedium.copyWith(
@@ -212,7 +234,7 @@ class _LoginPageState extends State<LoginPage> {
         height: 24.r,
         fit: BoxFit.contain,
       ),
-      onPressed: _cubit.loginWithGoogle,
+      onPressed: () => _cubit.doAction(const LoginWithGoogleAction()),
     );
   }
 

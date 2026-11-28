@@ -2,6 +2,8 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:movies_app/core/network/api_result.dart';
+import 'package:movies_app/core/network/errors.dart';
+import 'package:movies_app/features/auth/domain/entities/auth_user_entity.dart';
 import 'package:movies_app/features/auth/domain/use_cases/login_with_email_usecase.dart';
 import 'package:movies_app/features/auth/domain/use_cases/login_with_google_usecase.dart';
 import 'package:movies_app/features/auth/presentation/login/view/login_cubit.dart';
@@ -14,9 +16,17 @@ class _MockLoginWithGoogleUseCase extends Mock
     implements LoginWithGoogleUseCase {}
 
 void main() {
-  late LoginCubit cubit;
   late _MockLoginWithEmailUseCase mockEmailUseCase;
   late _MockLoginWithGoogleUseCase mockGoogleUseCase;
+  late LoginCubit cubit;
+
+  const tUser = AuthUserEntity(
+    uid: 'u1',
+    email: 'test@example.com',
+    name: 'Test User',
+    phone: '+201000000000',
+    avatarAsset: 'assets/images/Component 11 – 1.png',
+  );
 
   setUpAll(() {
     registerFallbackValue(const LoginWithEmailParams(email: '', password: ''));
@@ -28,7 +38,9 @@ void main() {
     cubit = LoginCubit(mockEmailUseCase, mockGoogleUseCase);
   });
 
-  tearDown(() async => cubit.close());
+  tearDown(() async {
+    await cubit.close();
+  });
 
   group('LoginCubit', () {
     test('initial state has initial resources', () {
@@ -37,15 +49,35 @@ void main() {
       expect(cubit.state.isAnyLoading, isFalse);
     });
 
+    test('navigateToRegisterAction emits NavigateToRegisterScreen', () async {
+      final navFuture = cubit.navigation.first;
+      await cubit.doAction(const NavigateToRegisterAction());
+      expect(await navFuture, isA<NavigateToRegisterScreen>());
+    });
+
+    test(
+      'navigateToForgotPasswordAction emits NavigateToForgotPasswordScreen',
+      () async {
+        final navFuture = cubit.navigation.first;
+        await cubit.doAction(const NavigateToForgotPasswordAction());
+        expect(await navFuture, isA<NavigateToForgotPasswordScreen>());
+      },
+    );
+
     blocTest<LoginCubit, LoginState>(
-      'loginWithEmail emits loading then success on Success result',
+      'submitLoginAction emits loading then success on Success result',
       build: () {
         when(
           () => mockEmailUseCase(any()),
-        ).thenAnswer((_) async => const Success(null));
-        return LoginCubit(mockEmailUseCase, mockGoogleUseCase);
+        ).thenAnswer((_) async => const Success(tUser));
+        return cubit;
       },
-      act: (c) => c.loginWithEmail('a@b.com', 'Password1!'),
+      act: (c) => c.doAction(
+        const SubmitLoginAction(
+          email: 'test@example.com',
+          password: 'Password1!',
+        ),
+      ),
       expect: () => [
         isA<LoginState>().having(
           (s) => s.loginResource.isLoading,
@@ -60,40 +92,41 @@ void main() {
       ],
     );
 
-    blocTest<LoginCubit, LoginState>(
-      'loginWithEmail emits loading then error on Failure result',
-      build: () {
+    test(
+      'submitLoginAction failure emits error resource and ShowLoginErrorToast',
+      () async {
         when(() => mockEmailUseCase(any())).thenAnswer(
-          (_) async => const Failure(message: 'Invalid credentials'),
+          (_) async => const Failure(
+            exception: JustMessage('Invalid credentials'),
+            message: 'Invalid credentials',
+          ),
         );
-        return LoginCubit(mockEmailUseCase, mockGoogleUseCase);
+
+        final navFuture = cubit.navigation.first;
+        await cubit.doAction(
+          const SubmitLoginAction(email: 'test@example.com', password: 'wrong'),
+        );
+
+        expect(cubit.state.loginResource.isError, isTrue);
+        expect(cubit.state.loginResource.message, 'Invalid credentials');
+        final nav = await navFuture;
+        expect(nav, isA<ShowLoginErrorToast>());
+        expect(
+          (nav as ShowLoginErrorToast).errorMessage,
+          'Invalid credentials',
+        );
       },
-      act: (c) => c.loginWithEmail('a@b.com', 'wrongpass'),
-      expect: () => [
-        isA<LoginState>().having(
-          (s) => s.loginResource.isLoading,
-          'isLoading',
-          isTrue,
-        ),
-        isA<LoginState>()
-            .having((s) => s.loginResource.isError, 'isError', isTrue)
-            .having(
-              (s) => s.loginResource.message,
-              'message',
-              'Invalid credentials',
-            ),
-      ],
     );
 
     blocTest<LoginCubit, LoginState>(
-      'loginWithGoogle emits loading then success on Success result',
+      'loginWithGoogleAction emits loading then success on Success result',
       build: () {
         when(
-          () => mockGoogleUseCase(any()),
-        ).thenAnswer((_) async => const Success(null));
-        return LoginCubit(mockEmailUseCase, mockGoogleUseCase);
+          () => mockGoogleUseCase(null),
+        ).thenAnswer((_) async => const Success(tUser));
+        return cubit;
       },
-      act: (c) => c.loginWithGoogle(),
+      act: (c) => c.doAction(const LoginWithGoogleAction()),
       expect: () => [
         isA<LoginState>().having(
           (s) => s.googleLoginResource.isLoading,
@@ -108,16 +141,26 @@ void main() {
       ],
     );
 
-    test('loginWithEmail is ignored when already loading', () async {
+    test('submitLoginAction is ignored when already loading', () async {
       when(() => mockEmailUseCase(any())).thenAnswer((_) async {
         await Future<void>.delayed(const Duration(milliseconds: 50));
-        return const Success(null);
+        return const Success(tUser);
       });
-      // Start first call (puts state into loading)
-      final firstCall = cubit.loginWithEmail('a@b.com', 'Password1!');
-      // Second call should be a no-op
-      await cubit.loginWithEmail('a@b.com', 'Password1!');
-      await firstCall;
+
+      final first = cubit.doAction(
+        const SubmitLoginAction(
+          email: 'test@example.com',
+          password: 'Password1!',
+        ),
+      );
+      await cubit.doAction(
+        const SubmitLoginAction(
+          email: 'test@example.com',
+          password: 'Password1!',
+        ),
+      );
+      await first;
+
       verify(() => mockEmailUseCase(any())).called(1);
     });
   });
