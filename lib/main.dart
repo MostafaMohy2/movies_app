@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,18 +6,14 @@ import 'core/config/app_config_cubit.dart';
 import 'core/config/app_config_states.dart';
 import 'core/di/service_locator.dart';
 import 'core/l10n/app_localizations.dart';
+import 'core/routing/app_router.dart';
 import 'core/routing/routes.dart';
 import 'core/theme/app_theme.dart';
-import 'core/routing/app_router.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // TODO: Run `flutterfire configure` to generate firebase_options.dart
-  try {
-    await Firebase.initializeApp();
-  } catch (e) {
-    log('Firebase not configured yet: $e', name: 'main');
-  }
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await initServiceLocator();
   runApp(const MoviesApp());
 }

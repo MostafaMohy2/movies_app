@@ -9,7 +9,7 @@ abstract interface class AuthRemoteDataSource {
     required String password,
   });
 
-  Future<UserCredential> loginWithGoogle();
+  Future<UserCredential> signInWithGoogle();
 
   Future<UserCredential> register({
     required String email,
@@ -37,7 +37,7 @@ class AuthFirebaseDataSourceImpl implements AuthRemoteDataSource {
   }) => _auth.signInWithEmailAndPassword(email: email, password: password);
 
   @override
-  Future<UserCredential> loginWithGoogle() async {
+  Future<UserCredential> signInWithGoogle() async {
     if (kIsWeb) {
       return _auth.signInWithPopup(GoogleAuthProvider());
     }

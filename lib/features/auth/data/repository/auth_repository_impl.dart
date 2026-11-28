@@ -26,7 +26,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<ApiResult<AuthUserEntity>> loginWithGoogle() => safeCall(() async {
-    final credential = await _remoteDataSource.loginWithGoogle();
+    final credential = await _remoteDataSource.signInWithGoogle();
     return AuthMapper.fromFirebaseUser(credential.user!);
   });
 
