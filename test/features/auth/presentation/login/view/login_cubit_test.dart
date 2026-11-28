@@ -2,8 +2,8 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:movies_app/core/network/api_result.dart';
-import 'package:movies_app/features/auth/domain/use_case/login_with_email_usecase.dart';
-import 'package:movies_app/features/auth/domain/use_case/login_with_google_usecase.dart';
+import 'package:movies_app/features/auth/domain/use_cases/login_with_email_usecase.dart';
+import 'package:movies_app/features/auth/domain/use_cases/login_with_google_usecase.dart';
 import 'package:movies_app/features/auth/presentation/login/view/login_cubit.dart';
 import 'package:movies_app/features/auth/presentation/login/view/login_states.dart';
 

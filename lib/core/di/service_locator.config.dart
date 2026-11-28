@@ -24,13 +24,13 @@ import 'package:movies_app/features/auth/data/repository/auth_repository_impl.da
     as _i539;
 import 'package:movies_app/features/auth/domain/repository/auth_repository.dart'
     as _i110;
-import 'package:movies_app/features/auth/domain/use_case/login_with_email_usecase.dart'
+import 'package:movies_app/features/auth/domain/use_cases/login_with_email_usecase.dart'
     as _i458;
-import 'package:movies_app/features/auth/domain/use_case/login_with_google_usecase.dart'
+import 'package:movies_app/features/auth/domain/use_cases/login_with_google_usecase.dart'
     as _i876;
-import 'package:movies_app/features/auth/domain/use_case/register_user_usecase.dart'
+import 'package:movies_app/features/auth/domain/use_cases/register_user_usecase.dart'
     as _i951;
-import 'package:movies_app/features/auth/domain/use_case/send_password_reset_usecase.dart'
+import 'package:movies_app/features/auth/domain/use_cases/send_password_reset_usecase.dart'
     as _i165;
 import 'package:movies_app/features/auth/presentation/forgot_password/view/forgot_password_cubit.dart'
     as _i633;

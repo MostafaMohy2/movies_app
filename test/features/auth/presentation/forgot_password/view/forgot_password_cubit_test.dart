@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:movies_app/core/network/api_result.dart';
 import 'package:movies_app/core/network/errors.dart';
-import 'package:movies_app/features/auth/domain/use_case/send_password_reset_usecase.dart';
+import 'package:movies_app/features/auth/domain/use_cases/send_password_reset_usecase.dart';
 import 'package:movies_app/features/auth/presentation/forgot_password/view/forgot_password_cubit.dart';
 
 class _MockSendPasswordResetUseCase extends Mock

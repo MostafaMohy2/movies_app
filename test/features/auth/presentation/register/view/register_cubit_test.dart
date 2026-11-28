@@ -3,7 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:movies_app/core/network/api_result.dart';
 import 'package:movies_app/core/network/errors.dart';
 import 'package:movies_app/features/auth/domain/entities/auth_user_entity.dart';
-import 'package:movies_app/features/auth/domain/use_case/register_user_usecase.dart';
+import 'package:movies_app/features/auth/domain/use_cases/register_user_usecase.dart';
 import 'package:movies_app/features/auth/presentation/register/view/register_cubit.dart';
 
 class _MockRegisterUserUseCase extends Mock implements RegisterUserUseCase {}
